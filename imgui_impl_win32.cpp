@@ -12,7 +12,7 @@
 // If you are new to Dear ImGui, read documentation from the docs/ folder + read the top of imgui.cpp.
 // Read online: https://github.com/ocornut/imgui/tree/master/docs
 
-#include "imgui.h"
+#include <thirdparty/imgui/imgui.h>
 #include "imgui_impl_win32.h"
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -27,8 +27,8 @@
 // Using XInput for gamepad (will load DLL dynamically)
 #ifndef IMGUI_IMPL_WIN32_DISABLE_GAMEPAD
 #include <xinput.h>
-typedef DWORD(WINAPI *PFN_XInputGetCapabilities)(DWORD, DWORD, XINPUT_CAPABILITIES *);
-typedef DWORD(WINAPI *PFN_XInputGetState)(DWORD, XINPUT_STATE *);
+typedef DWORD (WINAPI *PFN_XInputGetCapabilities)(DWORD, DWORD, XINPUT_CAPABILITIES*);
+typedef DWORD (WINAPI *PFN_XInputGetState)(DWORD, XINPUT_STATE*);
 #endif
 
 // CHANGELOG
@@ -78,16 +78,16 @@ static PFN_XInputGetState           g_XInputGetState = NULL;
 #endif
 
 // Functions
-bool    ImGui_ImplWin32_Init(void *hwnd)
+bool    ImGui_ImplWin32_Init(void* hwnd)
 {
-    if (!::QueryPerformanceFrequency((LARGE_INTEGER *)&g_TicksPerSecond))
+    if (!::QueryPerformanceFrequency((LARGE_INTEGER*)&g_TicksPerSecond))
         return false;
-    if (!::QueryPerformanceCounter((LARGE_INTEGER *)&g_Time))
+    if (!::QueryPerformanceCounter((LARGE_INTEGER*)&g_Time))
         return false;
 
     // Setup backend capabilities flags
     g_hWnd = (HWND)hwnd;
-    ImGuiIO &io = ImGui::GetIO();
+    ImGuiIO& io = ImGui::GetIO();
     io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;         // We can honor GetMouseCursor() values (optional)
     io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;          // We can honor io.WantSetMousePos requests (optional, rarely used)
     io.BackendPlatformName = "imgui_impl_win32";
@@ -119,7 +119,7 @@ bool    ImGui_ImplWin32_Init(void *hwnd)
 
     // Dynamically load XInput library
 #ifndef IMGUI_IMPL_WIN32_DISABLE_GAMEPAD
-    const char *xinput_dll_names[] =
+    const char* xinput_dll_names[] =
     {
         "xinput1_4.dll",   // Windows 8+
         "xinput1_3.dll",   // DirectX SDK
@@ -161,7 +161,7 @@ void    ImGui_ImplWin32_Shutdown()
 
 static bool ImGui_ImplWin32_UpdateMouseCursor()
 {
-    ImGuiIO &io = ImGui::GetIO();
+    ImGuiIO& io = ImGui::GetIO();
     if (io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange)
         return false;
 
@@ -194,7 +194,7 @@ static bool ImGui_ImplWin32_UpdateMouseCursor()
 
 static void ImGui_ImplWin32_UpdateMousePos()
 {
-    ImGuiIO &io = ImGui::GetIO();
+    ImGuiIO& io = ImGui::GetIO();
     IM_ASSERT(g_hWnd != 0);
 
     // Set OS mouse position if requested (rarely used, only when ImGuiConfigFlags_NavEnableSetMousePos is enabled by user)
@@ -218,7 +218,7 @@ static void ImGui_ImplWin32_UpdateMousePos()
 static void ImGui_ImplWin32_UpdateGamepads()
 {
 #ifndef IMGUI_IMPL_WIN32_DISABLE_GAMEPAD
-    ImGuiIO &io = ImGui::GetIO();
+    ImGuiIO& io = ImGui::GetIO();
     memset(io.NavInputs, 0, sizeof(io.NavInputs));
     if ((io.ConfigFlags & ImGuiConfigFlags_NavEnableGamepad) == 0)
         return;
@@ -236,36 +236,36 @@ static void ImGui_ImplWin32_UpdateGamepads()
     XINPUT_STATE xinput_state;
     if (g_HasGamepad && g_XInputGetState && g_XInputGetState(0, &xinput_state) == ERROR_SUCCESS)
     {
-        const XINPUT_GAMEPAD &gamepad = xinput_state.Gamepad;
+        const XINPUT_GAMEPAD& gamepad = xinput_state.Gamepad;
         io.BackendFlags |= ImGuiBackendFlags_HasGamepad;
 
-#define MAP_BUTTON(NAV_NO, BUTTON_ENUM)     { io.NavInputs[NAV_NO] = (gamepad.wButtons & BUTTON_ENUM) ? 1.0f : 0.0f; }
-#define MAP_ANALOG(NAV_NO, VALUE, V0, V1)   { float vn = (float)(VALUE - V0) / (float)(V1 - V0); if (vn > 1.0f) vn = 1.0f; if (vn > 0.0f && io.NavInputs[NAV_NO] < vn) io.NavInputs[NAV_NO] = vn; }
-        MAP_BUTTON(ImGuiNavInput_Activate, XINPUT_GAMEPAD_A);              // Cross / A
-        MAP_BUTTON(ImGuiNavInput_Cancel, XINPUT_GAMEPAD_B);              // Circle / B
-        MAP_BUTTON(ImGuiNavInput_Menu, XINPUT_GAMEPAD_X);              // Square / X
-        MAP_BUTTON(ImGuiNavInput_Input, XINPUT_GAMEPAD_Y);              // Triangle / Y
-        MAP_BUTTON(ImGuiNavInput_DpadLeft, XINPUT_GAMEPAD_DPAD_LEFT);      // D-Pad Left
-        MAP_BUTTON(ImGuiNavInput_DpadRight, XINPUT_GAMEPAD_DPAD_RIGHT);     // D-Pad Right
-        MAP_BUTTON(ImGuiNavInput_DpadUp, XINPUT_GAMEPAD_DPAD_UP);        // D-Pad Up
-        MAP_BUTTON(ImGuiNavInput_DpadDown, XINPUT_GAMEPAD_DPAD_DOWN);      // D-Pad Down
-        MAP_BUTTON(ImGuiNavInput_FocusPrev, XINPUT_GAMEPAD_LEFT_SHOULDER);  // L1 / LB
-        MAP_BUTTON(ImGuiNavInput_FocusNext, XINPUT_GAMEPAD_RIGHT_SHOULDER); // R1 / RB
-        MAP_BUTTON(ImGuiNavInput_TweakSlow, XINPUT_GAMEPAD_LEFT_SHOULDER);  // L1 / LB
-        MAP_BUTTON(ImGuiNavInput_TweakFast, XINPUT_GAMEPAD_RIGHT_SHOULDER); // R1 / RB
-        MAP_ANALOG(ImGuiNavInput_LStickLeft, gamepad.sThumbLX, -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE, -32768);
-        MAP_ANALOG(ImGuiNavInput_LStickRight, gamepad.sThumbLX, +XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE, +32767);
-        MAP_ANALOG(ImGuiNavInput_LStickUp, gamepad.sThumbLY, +XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE, +32767);
-        MAP_ANALOG(ImGuiNavInput_LStickDown, gamepad.sThumbLY, -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE, -32767);
-#undef MAP_BUTTON
-#undef MAP_ANALOG
+        #define MAP_BUTTON(NAV_NO, BUTTON_ENUM)     { io.NavInputs[NAV_NO] = (gamepad.wButtons & BUTTON_ENUM) ? 1.0f : 0.0f; }
+        #define MAP_ANALOG(NAV_NO, VALUE, V0, V1)   { float vn = (float)(VALUE - V0) / (float)(V1 - V0); if (vn > 1.0f) vn = 1.0f; if (vn > 0.0f && io.NavInputs[NAV_NO] < vn) io.NavInputs[NAV_NO] = vn; }
+        MAP_BUTTON(ImGuiNavInput_Activate,      XINPUT_GAMEPAD_A);              // Cross / A
+        MAP_BUTTON(ImGuiNavInput_Cancel,        XINPUT_GAMEPAD_B);              // Circle / B
+        MAP_BUTTON(ImGuiNavInput_Menu,          XINPUT_GAMEPAD_X);              // Square / X
+        MAP_BUTTON(ImGuiNavInput_Input,         XINPUT_GAMEPAD_Y);              // Triangle / Y
+        MAP_BUTTON(ImGuiNavInput_DpadLeft,      XINPUT_GAMEPAD_DPAD_LEFT);      // D-Pad Left
+        MAP_BUTTON(ImGuiNavInput_DpadRight,     XINPUT_GAMEPAD_DPAD_RIGHT);     // D-Pad Right
+        MAP_BUTTON(ImGuiNavInput_DpadUp,        XINPUT_GAMEPAD_DPAD_UP);        // D-Pad Up
+        MAP_BUTTON(ImGuiNavInput_DpadDown,      XINPUT_GAMEPAD_DPAD_DOWN);      // D-Pad Down
+        MAP_BUTTON(ImGuiNavInput_FocusPrev,     XINPUT_GAMEPAD_LEFT_SHOULDER);  // L1 / LB
+        MAP_BUTTON(ImGuiNavInput_FocusNext,     XINPUT_GAMEPAD_RIGHT_SHOULDER); // R1 / RB
+        MAP_BUTTON(ImGuiNavInput_TweakSlow,     XINPUT_GAMEPAD_LEFT_SHOULDER);  // L1 / LB
+        MAP_BUTTON(ImGuiNavInput_TweakFast,     XINPUT_GAMEPAD_RIGHT_SHOULDER); // R1 / RB
+        MAP_ANALOG(ImGuiNavInput_LStickLeft,    gamepad.sThumbLX,  -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE, -32768);
+        MAP_ANALOG(ImGuiNavInput_LStickRight,   gamepad.sThumbLX,  +XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE, +32767);
+        MAP_ANALOG(ImGuiNavInput_LStickUp,      gamepad.sThumbLY,  +XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE, +32767);
+        MAP_ANALOG(ImGuiNavInput_LStickDown,    gamepad.sThumbLY,  -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE, -32767);
+        #undef MAP_BUTTON
+        #undef MAP_ANALOG
     }
 #endif // #ifndef IMGUI_IMPL_WIN32_DISABLE_GAMEPAD
 }
 
 void    ImGui_ImplWin32_NewFrame()
 {
-    ImGuiIO &io = ImGui::GetIO();
+    ImGuiIO& io = ImGui::GetIO();
     IM_ASSERT(io.Fonts->IsBuilt() && "Font atlas not built! It is generally built by the renderer backend. Missing call to renderer _NewFrame() function? e.g. ImGui_ImplOpenGL3_NewFrame().");
 
     // Setup display size (every frame to accommodate for window resizing)
@@ -275,7 +275,7 @@ void    ImGui_ImplWin32_NewFrame()
 
     // Setup time step
     INT64 current_time = 0;
-    ::QueryPerformanceCounter((LARGE_INTEGER *)&current_time);
+    ::QueryPerformanceCounter((LARGE_INTEGER*)&current_time);
     io.DeltaTime = (float)(current_time - g_Time) / g_TicksPerSecond;
     g_Time = current_time;
 
@@ -326,7 +326,7 @@ IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARA
     if (ImGui::GetCurrentContext() == NULL)
         return 0;
 
-    ImGuiIO &io = ImGui::GetIO();
+    ImGuiIO& io = ImGui::GetIO();
     switch (msg)
     {
     case WM_LBUTTONDOWN: case WM_LBUTTONDBLCLK:
@@ -437,9 +437,9 @@ DECLARE_HANDLE(DPI_AWARENESS_CONTEXT);
 #ifndef DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2
 #define DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 (DPI_AWARENESS_CONTEXT)-4
 #endif
-typedef HRESULT(WINAPI *PFN_SetProcessDpiAwareness)(PROCESS_DPI_AWARENESS);                     // Shcore.lib + dll, Windows 8.1+
-typedef HRESULT(WINAPI *PFN_GetDpiForMonitor)(HMONITOR, MONITOR_DPI_TYPE, UINT *, UINT *);        // Shcore.lib + dll, Windows 8.1+
-typedef DPI_AWARENESS_CONTEXT(WINAPI *PFN_SetThreadDpiAwarenessContext)(DPI_AWARENESS_CONTEXT); // User32.lib + dll, Windows 10 v1607+ (Creators Update)
+typedef HRESULT(WINAPI* PFN_SetProcessDpiAwareness)(PROCESS_DPI_AWARENESS);                     // Shcore.lib + dll, Windows 8.1+
+typedef HRESULT(WINAPI* PFN_GetDpiForMonitor)(HMONITOR, MONITOR_DPI_TYPE, UINT*, UINT*);        // Shcore.lib + dll, Windows 8.1+
+typedef DPI_AWARENESS_CONTEXT(WINAPI* PFN_SetThreadDpiAwarenessContext)(DPI_AWARENESS_CONTEXT); // User32.lib + dll, Windows 10 v1607+ (Creators Update)
 
 // Helper function to enable DPI awareness without setting up a manifest
 void ImGui_ImplWin32_EnableDpiAwareness()
@@ -471,7 +471,7 @@ void ImGui_ImplWin32_EnableDpiAwareness()
 #pragma comment(lib, "gdi32")   // Link with gdi32.lib for GetDeviceCaps(). MinGW will require linking with '-lgdi32'
 #endif
 
-float ImGui_ImplWin32_GetDpiScaleForMonitor(void *monitor)
+float ImGui_ImplWin32_GetDpiScaleForMonitor(void* monitor)
 {
     UINT xdpi = 96, ydpi = 96;
     static BOOL bIsWindows8Point1OrGreater = IsWindows8Point1OrGreater();
@@ -494,7 +494,7 @@ float ImGui_ImplWin32_GetDpiScaleForMonitor(void *monitor)
     return xdpi / 96.0f;
 }
 
-float ImGui_ImplWin32_GetDpiScaleForHwnd(void *hwnd)
+float ImGui_ImplWin32_GetDpiScaleForHwnd(void* hwnd)
 {
     HMONITOR monitor = ::MonitorFromWindow((HWND)hwnd, MONITOR_DEFAULTTONEAREST);
     return ImGui_ImplWin32_GetDpiScaleForMonitor(monitor);
@@ -511,7 +511,7 @@ float ImGui_ImplWin32_GetDpiScaleForHwnd(void *hwnd)
 // [experimental]
 // Borrowed from GLFW's function updateFramebufferTransparency() in src/win32_window.c
 // (the Dwm* functions are Vista era functions but we are borrowing logic from GLFW)
-void ImGui_ImplWin32_EnableAlphaCompositing(void *hwnd)
+void ImGui_ImplWin32_EnableAlphaCompositing(void* hwnd)
 {
     if (!IsWindowsVistaOrGreater())
         return;
