@@ -4,7 +4,7 @@
 
 #include <d3d9.h>
 
-#include <instance.h>
+#include <gui_instance.h>
 #include <iostream>
 
 #include <controls/button.h>
@@ -91,11 +91,8 @@ auto window3 = std::make_shared<deadcell::gui::window>("window_id3");
 
 auto button = std::make_shared<deadcell::gui::button>("button_id1");
 auto button2 = std::make_shared<deadcell::gui::button>("button_id2");
+
 void draw_test() {
-   /* if (window->get_child(button) || window->get_child(button2)) {
-        Beep(500, 500);
-        window->remove_all_children();
-    }*/
 
 }
 
@@ -127,7 +124,7 @@ int main() {
 
     const ImVec4 clear_color = ImVec4(0.29f, 0.31f, 0.36f, 1.00f);
 
-    auto inst = std::make_shared<deadcell::gui::instance>();
+    auto inst = std::make_shared<deadcell::gui::gui_instance>();
 
     window->set_min_max({ 0, 0 }, { 250, 250 });
     window2->set_min_max({ 200, 200 }, { 250, 250 });
