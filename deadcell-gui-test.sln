@@ -4,6 +4,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "deadcell-gui-test", "deadcell-gui-test.vcxproj", "{FC5965F4-3F43-47D5-A43F-13994919C82E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C8EB6504-434B-4B35-B691-1623716EF73C} = {C8EB6504-434B-4B35-B691-1623716EF73C}
+		{727B5A77-FE84-4361-B4D0-1DC2AFFC6649} = {727B5A77-FE84-4361-B4D0-1DC2AFFC6649}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "deadcell-gui", "..\deadcell-gui\deadcell-gui.vcxproj", "{727B5A77-FE84-4361-B4D0-1DC2AFFC6649}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C8EB6504-434B-4B35-B691-1623716EF73C} = {C8EB6504-434B-4B35-B691-1623716EF73C}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "deadcell-imgui", "..\deadcell-gui\thirdparty\imgui\deadcell-imgui.vcxproj", "{C8EB6504-434B-4B35-B691-1623716EF73C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +32,22 @@ Global
 		{FC5965F4-3F43-47D5-A43F-13994919C82E}.Release|x64.Build.0 = Release|x64
 		{FC5965F4-3F43-47D5-A43F-13994919C82E}.Release|x86.ActiveCfg = Release|Win32
 		{FC5965F4-3F43-47D5-A43F-13994919C82E}.Release|x86.Build.0 = Release|Win32
+		{727B5A77-FE84-4361-B4D0-1DC2AFFC6649}.Debug|x64.ActiveCfg = Debug|x64
+		{727B5A77-FE84-4361-B4D0-1DC2AFFC6649}.Debug|x64.Build.0 = Debug|x64
+		{727B5A77-FE84-4361-B4D0-1DC2AFFC6649}.Debug|x86.ActiveCfg = Debug|Win32
+		{727B5A77-FE84-4361-B4D0-1DC2AFFC6649}.Debug|x86.Build.0 = Debug|Win32
+		{727B5A77-FE84-4361-B4D0-1DC2AFFC6649}.Release|x64.ActiveCfg = Release|x64
+		{727B5A77-FE84-4361-B4D0-1DC2AFFC6649}.Release|x64.Build.0 = Release|x64
+		{727B5A77-FE84-4361-B4D0-1DC2AFFC6649}.Release|x86.ActiveCfg = Release|Win32
+		{727B5A77-FE84-4361-B4D0-1DC2AFFC6649}.Release|x86.Build.0 = Release|Win32
+		{C8EB6504-434B-4B35-B691-1623716EF73C}.Debug|x64.ActiveCfg = Debug|x64
+		{C8EB6504-434B-4B35-B691-1623716EF73C}.Debug|x64.Build.0 = Debug|x64
+		{C8EB6504-434B-4B35-B691-1623716EF73C}.Debug|x86.ActiveCfg = Debug|Win32
+		{C8EB6504-434B-4B35-B691-1623716EF73C}.Debug|x86.Build.0 = Debug|Win32
+		{C8EB6504-434B-4B35-B691-1623716EF73C}.Release|x64.ActiveCfg = Release|x64
+		{C8EB6504-434B-4B35-B691-1623716EF73C}.Release|x64.Build.0 = Release|x64
+		{C8EB6504-434B-4B35-B691-1623716EF73C}.Release|x86.ActiveCfg = Release|Win32
+		{C8EB6504-434B-4B35-B691-1623716EF73C}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
