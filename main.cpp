@@ -85,7 +85,7 @@ void cleanup_device_d3d() {
     }
 }
 
-auto window = std::make_shared<deadcell::gui::window>("window_id1");
+auto window1 = std::make_shared<deadcell::gui::window>("window_id1");
 auto window2 = std::make_shared<deadcell::gui::window>("window_id2");
 auto window3 = std::make_shared<deadcell::gui::window>("window_id3");
 
@@ -126,24 +126,24 @@ int main() {
 
     auto inst = std::make_shared<deadcell::gui::gui_instance>();
 
-    window->set_min_max({ 0, 0 }, { 250, 250 });
-    window2->set_min_max({ 200, 200 }, { 250, 250 });
-    window3->set_min_max({ 400, 400 }, { 250, 250 });
+    window1->set_position_size({ 0, 0 }, { 250, 250 });
+    window2->set_position_size({ 200, 200 }, { 250, 250 });
+    window3->set_position_size({ 400, 400 }, { 250, 250 });
 
-    //inst->wm()->add_window(window);
+    //inst->wm()->add_window(window1);
     inst->wm()->add_window(window2);
     inst->wm()->add_window(window3);
 
-    inst->wm()->move_to_front(window, true);
+    inst->wm()->move_to_front(window1, true);
 
     
     window2->set_resizeable(false);
     window3->set_titlebar_height(24.0f);
 
-    window->add_child(button);
-    window->add_child(button2);
+    window1->add_child(button);
+    window1->add_child(button2);
 
-    auto str = window->build_class_tree();
+    auto str = window1->build_class_tree();
     std::cout << str << "\n";
 
     bool done = false;
