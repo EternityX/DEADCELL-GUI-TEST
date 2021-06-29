@@ -130,7 +130,7 @@ int main() {
     window2->set_position_size({ 200, 200 }, { 250, 250 });
     window3->set_position_size({ 400, 400 }, { 250, 250 });
 
-    //inst->wm()->add_window(window1);
+    inst->wm()->add_window(window1);
     inst->wm()->add_window(window2);
     inst->wm()->add_window(window3);
 
@@ -170,7 +170,7 @@ int main() {
         ImGui::GetForegroundDrawList()->ChannelsSetCurrent(0);
         ImGui::GetBackgroundDrawList()->ChannelsSetCurrent(0);
 
-        deadcell::gui::drawing::set_draw_list(ImGui::GetForegroundDrawList());
+        set_draw_list(deadcell::gui::drawing::draw_list_foreground);
 
         draw_test();
 
