@@ -85,12 +85,12 @@ void cleanup_device_d3d() {
     }
 }
 
-auto window1 = std::make_shared<deadcell::gui::window>("window_id1");
-auto window2 = std::make_shared<deadcell::gui::window>("window_id2");
+auto window1 = std::make_shared<deadcell::gui::window>("Window", "window_id1");
+auto window2 = std::make_shared<deadcell::gui::window>("Non-resizeable window", "window_id2");
 auto window3 = std::make_shared<deadcell::gui::window>("window_id3");
 
-auto button = std::make_shared<deadcell::gui::button>("button_id1");
-auto button2 = std::make_shared<deadcell::gui::button>("button_id2");
+auto button = std::make_shared<deadcell::gui::button>("hello", "button_id1", []() {});
+auto button2 = std::make_shared<deadcell::gui::button>("test", "button_id1", []() {});
 
 void draw_test() {
 
@@ -136,10 +136,11 @@ int main() {
 
     inst->wm()->move_to_front(window1, true);
 
-    
     window2->set_resizeable(false);
     window3->set_titlebar_height(24.0f);
 
+    button->set_size({ 130, 35 });
+    
     window1->add_child(button);
     window1->add_child(button2);
 
