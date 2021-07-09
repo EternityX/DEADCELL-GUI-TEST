@@ -1,4 +1,4 @@
-#include <thirdparty/imgui/imgui.h>
+
 #include "imgui_impl_dx9.h"
 #include "imgui_impl_win32.h"
 
@@ -8,7 +8,8 @@
 #include <iostream>
 
 #include <controls/button.h>
-#include <wrapped/layout.h>
+#include <controls/checkbox.h>
+#include <controls/progressbar.h>
 
 static LPDIRECT3D9 g_d3d = nullptr;
 static LPDIRECT3DDEVICE9 g_d3d_device = nullptr;
@@ -89,8 +90,33 @@ auto window1 = std::make_shared<deadcell::gui::window>("Window", "window_id1");
 auto window2 = std::make_shared<deadcell::gui::window>("Non-resizeable window", "window_id2");
 auto window3 = std::make_shared<deadcell::gui::window>("window_id3");
 
-auto button = std::make_shared<deadcell::gui::button>("hello", "button_id1", []() {});
-auto button2 = std::make_shared<deadcell::gui::button>("test", "button_id1", []() {});
+auto button2 = std::make_shared<deadcell::gui::button>("Auto sizing example", "button_id2", []() { });
+
+auto button3 = std::make_shared<deadcell::gui::button>("Disabled button", "button_id3", []() { });
+
+bool test_var = false;
+auto checkbox1 = std::make_shared<deadcell::gui::checkbox>("Checkbox", "checkbox_id1", &test_var, []()
+{
+    test_var = !test_var;
+});
+
+auto checkbox2 = std::make_shared<deadcell::gui::checkbox>("Disabled checkbox", "checkbox_id2", &test_var, []()
+{
+    test_var = !test_var;
+});
+
+auto progress = std::make_shared<deadcell::gui::progressbar<int>>("Progress bar", "progress_id1", 420.0f, []()
+{
+    std::cout << "progress completed\n";
+});
+
+auto button = std::make_shared<deadcell::gui::button>("Increment by 25", "button_id1", []()
+{
+    /*button2->set_text("This is a really long message that will automatically wrap text and resize the button");
+    button2->set_auto_size(true);*/
+
+    progress->increment_progress(25);
+});
 
 void draw_test() {
 
@@ -117,7 +143,6 @@ int main() {
     ::UpdateWindow(hwnd);
 
     ImGui::CreateContext();
-    ImGuiIO &io = ImGui::GetIO();
 
     ImGui_ImplWin32_Init(hwnd);
     ImGui_ImplDX9_Init(g_d3d_device);
@@ -139,12 +164,37 @@ int main() {
     window2->set_resizeable(false);
     window3->set_titlebar_height(24.0f);
 
-    button->set_size({ 130, 35 });
-    
-    window1->add_child(button);
-    window1->add_child(button2);
+    button->set_position({ 150, 150 });
+    button->set_size({ 150, 35 });
+    button->set_auto_size(false);
 
-    auto str = window1->build_class_tree();
+    button2->set_enabled(true);
+    button2->set_position({ 150, button->get_position().y + button->get_size().y + 8 });
+    button2->set_size({ 150, 35 });
+    button2->set_auto_size(false);
+
+    button3->set_enabled(false);
+    button3->set_position({ 150, button2->get_position().y + button2->get_size().y + 8 });
+    button3->set_size({ 150, 35 });
+    button3->set_auto_size(false);
+
+    checkbox1->set_position({ 50, 80 });
+
+    checkbox2->set_position({ 50, checkbox1->get_position().y + checkbox1->get_size().y + 8 });
+    checkbox2->set_enabled(false);
+    
+    button2->add_child(button3);
+    window1->add_child(button2);
+    window1->add_child(button);
+    window1->add_child(checkbox1);
+    window1->add_child(checkbox2);
+
+    progress->set_position({ 500, 500 });
+    window1->add_child(progress);
+    auto str = button2->build_class_tree();
+    std::cout << str << "\n";
+
+    str = window1->build_class_tree();
     std::cout << str << "\n";
 
     bool done = false;
@@ -176,7 +226,7 @@ int main() {
         draw_test();
 
         inst->wm()->new_frame();
-
+        button3->set_position({ 150, button2->get_position().y + button2->get_size().y + 8 });
         //ImGui::GetForegroundDrawList()->ChannelsMerge();
         ImGui::EndFrame();
 
