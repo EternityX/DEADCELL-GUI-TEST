@@ -3,7 +3,7 @@
 
 #include <d3d9.h>
 
-#include <gui_instance.h>
+#include <deadcell_gui.h>
 #include <iostream>
 
 #include <controls/button.h>
@@ -13,6 +13,8 @@
 static LPDIRECT3D9 g_d3d = nullptr;
 static LPDIRECT3DDEVICE9 g_d3d_device = nullptr;
 static D3DPRESENT_PARAMETERS g_d3d_parameters = {};
+
+using namespace deadcell;
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -44,7 +46,7 @@ long __stdcall wnd_proc(HWND hwnd, unsigned int msg, WPARAM wparam, LPARAM lpara
                 return 0;
             break;
         case WM_DESTROY:
-            ::PostQuitMessage(0);
+            PostQuitMessage(0);
             return 0;
     }
     return ::DefWindowProc(hwnd, msg, wparam, lparam);
@@ -85,31 +87,31 @@ void cleanup_device_d3d() {
     }
 }
 
-auto window1 = std::make_shared<deadcell::gui::window>("Window", "window_id1");
-auto window2 = std::make_shared<deadcell::gui::window>("Non-resizeable window", "window_id2");
-auto window3 = std::make_shared<deadcell::gui::window>("window_id3");
+auto window1 = std::make_shared<gui::window>("Window", "window_id1");
+auto window2 = std::make_shared<gui::window>("Non-resizeable window", "window_id2");
+auto window3 = std::make_shared<gui::window>("window_id3");
 
-auto button2 = std::make_shared<deadcell::gui::button>("Auto sizing example", "button_id2", []() { });
+auto button2 = std::make_shared<gui::button>("Auto sizing example", "button_id2", []() { });
 
-auto button3 = std::make_shared<deadcell::gui::button>("Disabled button", "button_id3", []() { });
+auto button3 = std::make_shared<gui::button>("Disabled button", "button_id3", []() { });
 
 bool test_var = false;
-auto checkbox1 = std::make_shared<deadcell::gui::checkbox>("Checkbox", "checkbox_id1", &test_var, []()
+auto checkbox1 = std::make_shared<gui::checkbox>("Checkbox", "checkbox_id1", &test_var, []()
 {
     test_var = !test_var;
 });
 
-auto checkbox2 = std::make_shared<deadcell::gui::checkbox>("Disabled checkbox", "checkbox_id2", &test_var, []()
+auto checkbox2 = std::make_shared<gui::checkbox>("Disabled checkbox", "checkbox_id2", &test_var, []()
 {
     test_var = !test_var;
 });
 
-auto progress = std::make_shared<deadcell::gui::progressbar<int>>("Progress bar", "progress_id1", 420.0f, []()
+auto progress = std::make_shared<gui::progressbar<int>>("Progress bar", "progress_id1", 420.0f, []()
 {
     std::cout << "progress completed\n";
 });
 
-auto button = std::make_shared<deadcell::gui::button>("Increment by 25", "button_id1", []()
+auto button = std::make_shared<gui::button>("Increment by 25", "button_id1", []()
 {
     button2->set_text("This is a really long message that will automatically wrap text and resize the button");
     button2->set_auto_size(true);
@@ -135,8 +137,8 @@ int main() {
         return 1;
     }
 
-    ::ShowWindow(hwnd, SW_SHOWDEFAULT);
-    ::UpdateWindow(hwnd);
+    ShowWindow(hwnd, SW_SHOWDEFAULT);
+    UpdateWindow(hwnd);
 
     ImGui::CreateContext();
 
@@ -145,17 +147,21 @@ int main() {
 
     const ImVec4 clear_color = ImVec4(0.29f, 0.31f, 0.36f, 1.00f);
 
-    auto inst = std::make_shared<deadcell::gui::gui_instance>();
+    auto inst = std::make_shared<gui::deadcell_gui>();
 
     window1->set_position_size({ 0, 0 }, { 250, 250 });
     window2->set_position_size({ 200, 200 }, { 250, 250 });
     window3->set_position_size({ 400, 400 }, { 250, 250 });
+
+    //auto meme = inst->add<gui::button>("hello", "hello", []() { std::cout << "pressed\n"; });
 
     inst->wm()->add_window(window1);
     inst->wm()->add_window(window2);
     inst->wm()->add_window(window3);
 
     inst->wm()->move_to_front(window1, true);
+
+    //window1->add_child(meme);
 
     window2->set_resizeable(false);
     window3->set_titlebar_height(24.0f);
@@ -217,7 +223,7 @@ int main() {
         ImGui::GetForegroundDrawList()->ChannelsSetCurrent(0);
         ImGui::GetBackgroundDrawList()->ChannelsSetCurrent(0);
 
-        set_draw_list(deadcell::gui::drawing::draw_list_foreground);
+        set_draw_list(gui::drawing::draw_list_foreground);
 
         inst->wm()->new_frame();
         button3->set_position({ 150, button2->get_position().y + button2->get_size().y + 8 });
