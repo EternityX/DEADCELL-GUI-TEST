@@ -111,15 +111,12 @@ auto progress = std::make_shared<deadcell::gui::progressbar<int>>("Progress bar"
 
 auto button = std::make_shared<deadcell::gui::button>("Increment by 25", "button_id1", []()
 {
-    /*button2->set_text("This is a really long message that will automatically wrap text and resize the button");
-    button2->set_auto_size(true);*/
+    button2->set_text("This is a really long message that will automatically wrap text and resize the button");
+    button2->set_auto_size(true);
 
     progress->increment_progress(25);
 });
 
-void draw_test() {
-
-}
 
 int main() {
     WNDCLASSEX wc = {
@@ -221,8 +218,6 @@ int main() {
         ImGui::GetBackgroundDrawList()->ChannelsSetCurrent(0);
 
         set_draw_list(deadcell::gui::drawing::draw_list_foreground);
-
-        draw_test();
 
         inst->wm()->new_frame();
         button3->set_position({ 150, button2->get_position().y + button2->get_size().y + 8 });
