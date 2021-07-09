@@ -9,7 +9,6 @@
   <ItemGroup>
     <ClInclude Include="imgui_impl_dx9.h" />
     <ClInclude Include="imgui_impl_win32.h" />
-    <ClInclude Include="shader.h" />
     <ClInclude Include="imgui_freetype.h" />
   </ItemGroup>
 </Project>
