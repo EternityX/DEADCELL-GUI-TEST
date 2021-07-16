@@ -113,7 +113,7 @@ int main() {
 
     const auto clear_color = ImVec4(0.29f, 0.31f, 0.36f, 1.00f);
 
-    std::shared_ptr<gui::deadcell_gui> gui = gui::create();
+    std::shared_ptr<gui::deadcell_gui> gui = std::make_shared<gui::deadcell_gui>();
 
     auto window1 = gui->add<gui::window>("Window", "window_id1");
     window1->set_position_size({ 0, 0 }, { 250, 250 });
