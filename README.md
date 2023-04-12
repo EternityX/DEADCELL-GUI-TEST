@@ -1,2 +1,2 @@
 Demo/test project for
-https://github.com/EternityX/deadcell-gui.
+https://github.com/drearydev/deadcell-gui.
